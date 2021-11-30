@@ -183,7 +183,7 @@ def all_template_match(templates, template_names, img, tol=0.6, display=False):
     plt.imshow(im)
     plt.ion()
     plt.show()
-    correct = raw_input("Is this correct? (y/n)--> ")
+    correct = input("Is this correct? (y/n)--> ")
     plt.close()
     if correct == 'y':
       acc = 1
@@ -249,7 +249,7 @@ def get_new_center(old_center, new_center, existing_count):
   return old_center*old_center_weight + new_center*new_center_weight
 
 def reimplement_polygon(img, template_dict, min_dist=50):
-  print img, template_dict
+  print(img, template_dict)
   node_idx = 0
   node_names = []
   node_centers = []
@@ -257,7 +257,7 @@ def reimplement_polygon(img, template_dict, min_dist=50):
   im = cv2.imread(img,0)
   ret, im = cv2.threshold(im, THRESH_VAL, 255, cv2.THRESH_BINARY_INV)
   im = cv2.copyMakeBorder(im,BORDER,BORDER,BORDER,BORDER,cv2.BORDER_CONSTANT,0)
-  with open(template_dict) as handle:
+  with open(template_dict, 'rb') as handle:
     bbox_dict = pickle.load(handle)
   for k in bbox_dict.keys():
     for bbox in bbox_dict[k]:
@@ -304,21 +304,21 @@ def reimplement_polygon(img, template_dict, min_dist=50):
   for point in node_centers:
     point = [int(p) for p in point]
     cv2.rectangle(display_im, (point[1]-4,point[0]-4), (point[1]+4, point[0]+4), color=[255,0,0], thickness=-1)
-  print node_names
+  print(node_names)
   plt.imshow(display_im)
   plt.title("Centers")
   plt.ion()
   plt.show()
-  c = raw_input("Correct? (y/n) --> ")
-  n = raw_input("Number of nodes --> ")
+  c = input("Correct? (y/n) --> ")
+  n = input("Number of nodes --> ")
   if c == 'y':
     corr = 1.0
     fp_float = 0.0
     fn_float = 0.0
   else:
     corr = 0.0
-    fp = raw_input("False positives --> ")
-    fn = raw_input("False negatives --> ")
+    fp = input("False positives --> ")
+    fn = input("False negatives --> ")
     fp_float = float(fp)
     fn_float = float(fn)
   plt.close()
@@ -332,7 +332,7 @@ def corner_detector(img, template_dict, max_corners = 20, display=True, rect_w=6
   # threshold the image to make binary
   ret,im = cv2.threshold(im,THRESH_VAL,255,cv2.THRESH_BINARY_INV)
   im = cv2.copyMakeBorder(im,BORDER,BORDER,BORDER,BORDER,cv2.BORDER_CONSTANT,0)
-  with open(template_dict) as handle:
+  with open(template_dict, 'rb') as handle:
     bbox_dict = pickle.load(handle)
   for k in bbox_dict.keys():
     for bbox in bbox_dict[k]:
@@ -357,8 +357,8 @@ def corner_detector(img, template_dict, max_corners = 20, display=True, rect_w=6
     plt.imshow(im)
     plt.ion()
     plt.show()
-    c = raw_input("Correct? (y/n) --> ")
-    n = raw_input("Number of nodes --> ")
+    c = input("Correct? (y/n) --> ")
+    n = input("Number of nodes --> ")
     if c == 'y':
       corr = 1.0
       fp_float = 0.0
@@ -367,8 +367,8 @@ def corner_detector(img, template_dict, max_corners = 20, display=True, rect_w=6
         pickle.dump(final_corners, handle)
     else:
       corr = 0.0
-      fp = raw_input("False positives --> ")
-      fn = raw_input("False negatives --> ")
+      fp = input("False positives --> ")
+      fn = input("False negatives --> ")
       fp_float = float(fp)
       fn_float = float(fn)
     plt.close()
@@ -438,7 +438,7 @@ def detect_bonds(img, template_dict, corner_file, bbox_width=40, angle_tol = 1):
   # threshold the image to make binary
   ret,im = cv2.threshold(im,THRESH_VAL,255,cv2.THRESH_BINARY_INV)
   im = cv2.copyMakeBorder(im,BORDER,BORDER,BORDER,BORDER,cv2.BORDER_CONSTANT,0)
-  with open(template_dict) as handle:
+  with open(template_dict, 'rb') as handle:
     bbox_dict = pickle.load(handle)
   for k in bbox_dict.keys():
     for bbox in bbox_dict[k]:
@@ -447,7 +447,7 @@ def detect_bonds(img, template_dict, corner_file, bbox_width=40, angle_tol = 1):
       y0 = bbox[2]
       y1 = bbox[3]
       im[y0:y1, x0:x1] = np.zeros((y1-y0,x1-x0))
-  with open(corner_file) as handle:
+  with open(corner_file, 'rb') as handle:
     corners = pickle.load(handle)
   display_im = cv2.cvtColor(im, cv2.COLOR_GRAY2RGB)
   checked = set([])
@@ -493,8 +493,8 @@ def detect_bonds(img, template_dict, corner_file, bbox_width=40, angle_tol = 1):
   plt.imshow(display_im)
   plt.ion()
   plt.show()
-  c = raw_input("Correct? (y/n) --> ")
-  n = raw_input("Number of nodes --> ")
+  c = input("Correct? (y/n) --> ")
+  n = input("Number of nodes --> ")
   if c == 'y':
     corr = 1.0
     fp_float = 0.0
@@ -503,8 +503,8 @@ def detect_bonds(img, template_dict, corner_file, bbox_width=40, angle_tol = 1):
       pickle.dump(edges, handle)
   else:
     corr = 0.0
-    fp = raw_input("False positives --> ")
-    fn = raw_input("False negatives --> ")
+    fp = input("False positives --> ")
+    fn = input("False negatives --> ")
     fp_float = float(fp)
     fn_float = float(fn)
   plt.close()
@@ -567,7 +567,7 @@ def train_classifier(processed_dict, train_split = 0.9, type='svm'):
   featureX_test = []
   labels_test = []
 
-  for bond_type, im_list in processed_dict.iteritems():
+  for bond_type, im_list in processed_dict.items():
     label_conversion[label] = bond_type
     for im in im_list:
       if random.random() <= train_split:
@@ -596,8 +596,8 @@ def train_classifier(processed_dict, train_split = 0.9, type='svm'):
         hits_by_class[label].append(1)
       else:
         hits_by_class[label].append(0)
-    for label, hits in hits_by_class.iteritems():
-      print label_conversion[label], np.mean(hits)
+    for label, hits in hits_by_class.items():
+      print(label_conversion[label], np.mean(hits))
     return classifier.score(featureX_test, labels_test)
   return classifier, label_conversion
 
@@ -670,11 +670,16 @@ def classify_bonds(edge_file,img,classifier,label_dict,template_dict_file,rect_w
   ret,im = cv2.threshold(im,THRESH_VAL,255,cv2.THRESH_BINARY_INV)
   im = cv2.copyMakeBorder(im,BORDER,BORDER,BORDER,BORDER,cv2.BORDER_CONSTANT,0)
   shape = im.shape
-  with open(edge_file) as handle:
-    edges = pickle.load(handle)
-  with open(template_dict_file) as handle:
+  with open(edge_file, 'rb') as handle:
+    u = pickle._Unpickler(handle)
+    u.encoding = 'latin1'
+    edges = u.load()
+   
+#edges = pickle.load(handle)
+
+  with open(template_dict_file, 'rb') as handle:
     template_dict = pickle.load(handle)
-  print edges
+  print(edges)
   subimgs = get_bonds(edges, im)
   assignments = []
   for i,subimg in enumerate(subimgs):
@@ -691,14 +696,16 @@ def classify_bonds(edge_file,img,classifier,label_dict,template_dict_file,rect_w
     guesses = classifier.predict(blocks)
     guess_count = Counter(guesses)
     label = (guess_count.most_common(1)[0])[0]
-    print label
+    print(label)
     assignments.append(label_dict[label])
   color_im = cv2.cvtColor(im, cv2.COLOR_GRAY2RGB)
   for i,line_segment in enumerate(edges):
     color = COLOR_DICT[assignments[i]]
     if color == 'none':
       continue
-    cv2.line(color_im,line_segment[0],line_segment[1],color,thickness=5)
+    int_line_segments_0 = tuple([int(tup) for tup in line_segment[0]])
+    int_line_segments_1 = tuple([int(tup) for tup in line_segment[1]])
+    cv2.line(color_im, int_line_segments_0, int_line_segments_1, color, thickness=5)
   for key in template_dict.keys():
     if len(template_dict[key]) != 0:
       color = COLOR_DICT_OCR[key]
@@ -707,8 +714,8 @@ def classify_bonds(edge_file,img,classifier,label_dict,template_dict_file,rect_w
   plt.imshow(color_im)
   plt.ion()
   plt.show()
-  c = raw_input("Correct? (y/n) --> ")
-  n = raw_input("Number of edges correct --> ")
+  c = input("Correct? (y/n) --> ")
+  n = input("Number of edges correct --> ")
   if c == 'y':
     corr = 1.0
   else:
@@ -751,7 +758,7 @@ for path in PATHS:
       total += 1
     except IOError:
       pass
-  print corr_mol, corr_edge, total
+  print(corr_mol, corr_edge, total)
 
 
 
