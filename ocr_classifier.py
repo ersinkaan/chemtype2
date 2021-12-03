@@ -122,13 +122,13 @@ def get_training_examples(path, n_per_size=5):
   for i, image in enumerate(os.listdir(path)):
     if image[len(image)-6:len(image)] not in TRAIN_IMAGES:
       continue
-    print image
+    print (image)
     im = cv2.imread(path+image,0)
     ret,im = cv2.threshold(im,100,255,cv2.THRESH_BINARY_INV)
     height,width = im.shape
     j = 0
     for size in PYRAMID_SIZES:
-      print size
+      print (size)
       n_subs = 0
       while n_subs < n_per_size:
         x = random.choice(range(0,width-size))
@@ -139,19 +139,19 @@ def get_training_examples(path, n_per_size=5):
         plt.imshow(sub, cmap='Greys_r')
         plt.ion()
         plt.show()
-        letter = raw_input("Letter (x for none)--> ")
+        letter = input("Letter (x for none)--> ")
         plt.close()
         if letter == 'x':
           cv2.imwrite('train/none/' + image + '_' + str(j) + '.png', sub)
           n_subs += 1
           j += 1
         elif letter in ['h','o','r', 'n']:
-          print letter
+          print (letter)
           cv2.imwrite('train/' + letter + '/' + image + '_' + str(j) + '.png', sub)
           n_subs += 1
           j += 1
         else:
-          print "letter not recognized"
+          print( "letter not recognized")
 
 #for path in PATHS:
 #  get_training_examples(path)
@@ -258,7 +258,7 @@ def train_ocr_classifier(train_split=0.9, classifier_type='nn'):
         if y_test[i] == np.argmax(prediction):
           n_correct += 1
       score = n_correct/n_total
-      print score
+      print (score)
     return classifier
   else:
     if classifier_type == 'svm':
@@ -268,7 +268,7 @@ def train_ocr_classifier(train_split=0.9, classifier_type='nn'):
     classifier.fit(X_train,y_train)
     if train_split < 1:
       score = classifier.score(X_test, y_test)
-      print score
+      print (score)
     return classifier, classifier_type
 '''
 avg = []

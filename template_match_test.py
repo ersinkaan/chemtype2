@@ -3,6 +3,22 @@ A script to test the template matching OCR.
 '''
 
 import chemtype
+from collections import defaultdict, Counter
+import cv2
+from intersect import intersects
+import numpy as np
+from matplotlib.patches import Rectangle
+import matplotlib.pyplot as plt
+import os
+from PIL import Image
+import pickle
+import random
+from scipy import ndimage
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.tree import DecisionTreeClassifier
+import subprocess
+import time
 
 ### globals 
 
@@ -100,8 +116,8 @@ for path in PATHS:
   accuracies = []
   for i,tol in enumerate(test_tolerances):
     start = time.time()
-    print "Processing", path, "at tolerance", tol
-    precision, recall, tp, fp, fn, acc = all_template_match_all_images(TEMPLATES, TEMPLATE_NAMES, path, tol=tol, display=False)
+    print( "Processing", path, "at tolerance", tol)
+    precision, recall, tp, fp, fn, acc = chemtype.all_template_match_all_images(TEMPLATES, TEMPLATE_NAMES, path, tol=tol, display=False)
     precisions.append(precision)
     recalls.append(recall)
     n_tp[i] += tp
@@ -109,7 +125,7 @@ for path in PATHS:
     n_fn[i] += fn
     p_file.write(str(precision) + ' ')
     r_file.write(str(recall) + ' ')
-    print "took", time.time()-start, "s"
+    print ("took", time.time()-start, "s")
   p_file.write('\n')
   r_file.write('\n')
 p_file.close()
@@ -132,5 +148,5 @@ plt.legend()
 plt.show()
 
 for path in ['data/struct22/sd/']:
-  precision, recall, tp, fp, fn, acc = all_template_match_all_images(TEMPLATES, TEMPLATE_NAMES, path, tol=0.77, display=True)
-  print precision, recall, acc
+  precision, recall, tp, fp, fn, acc = chemtype.all_template_match_all_images(TEMPLATES, TEMPLATE_NAMES, path, tol=0.77, display=True)
+  print (precision, recall, acc)

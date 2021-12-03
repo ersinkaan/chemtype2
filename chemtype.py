@@ -105,7 +105,7 @@ def template_match(template, img, min_scale=0.3, max_scale=1.0, n_scales=15, thr
   im = cv2.imread(img,0)
   ret, im = cv2.threshold(im, THRESH_VAL, 255, cv2.THRESH_BINARY_INV)
   im = cv2.copyMakeBorder(im,BORDER,BORDER,BORDER,BORDER,cv2.BORDER_CONSTANT,0)
-  im = cv2.GaussianBlur(im, (LINE_WIDTH/2, LINE_WIDTH/2), LINE_WIDTH/2)
+  im = cv2.GaussianBlur(im, (int(LINE_WIDTH/2), int(LINE_WIDTH/2)), int(LINE_WIDTH/2))
   tem = cv2.imread(template,0)
   boxes = []
   for i,scale in enumerate(np.linspace(min_scale,max_scale,n_scales)):
@@ -333,7 +333,11 @@ def corner_detector(img, template_dict, max_corners = 20, display=True, rect_w=6
   ret,im = cv2.threshold(im,THRESH_VAL,255,cv2.THRESH_BINARY_INV)
   im = cv2.copyMakeBorder(im,BORDER,BORDER,BORDER,BORDER,cv2.BORDER_CONSTANT,0)
   with open(template_dict, 'rb') as handle:
-    bbox_dict = pickle.load(handle)
+    u = pickle._Unpickler(handle)
+    u.encoding = 'latin1'
+    bbox_dict = u.load()
+   
+#    bbox_dict = pickle.load(handle)
   for k in bbox_dict.keys():
     for bbox in bbox_dict[k]:
       x0 = bbox[0]
@@ -351,7 +355,7 @@ def corner_detector(img, template_dict, max_corners = 20, display=True, rect_w=6
     corner_points = corner[0]
     corner_y = int(corner_points[0])
     corner_x = int(corner_points[1])
-    cv2.rectangle(im,(corner_y-rect_w/2,corner_x-rect_w/2),(corner_y+rect_w/2,corner_x+rect_w/2),color=[255,0,0],thickness=-1)
+    cv2.rectangle(im,(int(corner_y-rect_w/2),int(corner_x-rect_w/2)),(int(corner_y+rect_w/2),int(corner_x+rect_w/2)),color=[255,0,0],thickness=-1)
   final_corners = [((corner[0])[0], (corner[0])[1]) for corner in corners]
   if display:
     plt.imshow(im)
@@ -731,7 +735,7 @@ for i in range(10):
 print np.mean(scores)
 '''
 ###
-    
+'''
 processed_dict = preprocess_training(BOND_TRAINING_DICT)
 classifier_svm, label_dict_svm = train_classifier(processed_dict, train_split=1)
 classifier_decision, label_dict_decision = train_classifier(processed_dict, train_split=1)
@@ -759,6 +763,7 @@ for path in PATHS:
     except IOError:
       pass
   print(corr_mol, corr_edge, total)
+'''
 
 
 
