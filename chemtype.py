@@ -74,7 +74,7 @@ for i,path in enumerate(BOND_PATHS):
 ### ocr ground truth import ###
 
 GROUND_TRUTH_DICT = {}
-f = open('ocr_groundtruth.txt')
+f = open('txtfiles/ocr_groundtruth.txt')
 for line in f.readlines():
   split_line = line.split()
   k = split_line[0]
@@ -87,7 +87,7 @@ f.close()
 
 ### corner ground truth import ###
 CORNER_TRUTH_DICT = {}
-g = open('corners_groundtruth.txt')
+g = open('txtfiles/corners_groundtruth.txt')
 for line in g.readlines():
   split_line = line.split()
   k = split_line[0]
@@ -735,7 +735,7 @@ for i in range(10):
 print np.mean(scores)
 '''
 ###
-'''
+
 processed_dict = preprocess_training(BOND_TRAINING_DICT)
 classifier_svm, label_dict_svm = train_classifier(processed_dict, train_split=1)
 classifier_decision, label_dict_decision = train_classifier(processed_dict, train_split=1)
@@ -763,7 +763,6 @@ for path in PATHS:
     except IOError:
       pass
   print(corr_mol, corr_edge, total)
-'''
 
 
 

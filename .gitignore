@@ -2,3 +2,5 @@ data
 pickles
 train
 __pycache__
+*.zip
+zipfiles
