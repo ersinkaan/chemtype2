@@ -5,6 +5,7 @@ Testing of the corner and bond detection algorithms.
 import os
 import chemtype
 from collections import defaultdict
+import math
 
 ### globals 
 
@@ -12,15 +13,15 @@ THRESH_VAL = 100
 LINE_WIDTH = 18 # needs to be even
 BORDER = 30
 STRUCTURES = [
-  #'struct1', 
-  #'struct4', 
-  #'struct5',
-  #'struct8',
-  #'struct13',
-  #'struct16',
-  'struct19',
-  'struct20',
-  'struct22',
+  'struct1', 
+  # #'struct4', 
+  # #'struct5',
+  # #'struct8',
+  # #'struct13',
+  # #'struct16',
+  # 'struct19',
+  # 'struct20',
+  # 'struct22',
 ]
 
 PATHS = ['data/' + structure + '/sd/' for structure in STRUCTURES]

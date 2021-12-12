@@ -19,22 +19,26 @@ from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
 import subprocess
 import time
+import math
 
 ### globals 
 
 THRESH_VAL = 100
 LINE_WIDTH = 18 # needs to be even
 BORDER = 30
+# STRUCTURES = [
+#   'struct1', 
+#   'struct4', 
+#   'struct5',
+#   'struct8',
+#   'struct13',
+#   'struct16',
+#   'struct19',
+#   'struct20',
+#   'struct22',
+# ]
 STRUCTURES = [
   'struct1', 
-  'struct4', 
-  'struct5',
-  'struct8',
-  'struct13',
-  'struct16',
-  'struct19',
-  'struct20',
-  'struct22',
 ]
 
 PATHS = ['data/' + structure + '/sd/' for structure in STRUCTURES]
@@ -386,7 +390,7 @@ def detect_bond_between_corners(im, corner1, corner2, bbox_width, angle_tol, hou
   corner1_vec = np.array(corner1)
   corner2_vec = np.array(corner2)
   n_true = 0
-  for degree in np.linspace(0,1,np.linalg.norm(v)/window_spacing,endpoint=False):
+  for degree in np.linspace(0,1,int(np.linalg.norm(v)/window_spacing),endpoint=False):
     new_im = im.copy()
     display_im = cv2.cvtColor(im, cv2.COLOR_GRAY2RGB)
     p1 = corner1_vec + degree*v + v_orth_norm*bbox_width*0.5
@@ -405,8 +409,9 @@ def detect_bond_between_corners(im, corner1, corner2, bbox_width, angle_tol, hou
       point2 = point_list[(i+1) % 4]
       cv2.line(display_im, tuple(point1), tuple(point2), color=[255,0,0], thickness=2)
   
-    lines = cv2.HoughLines(new_im, 1, np.pi/180, hough_tol)
+    lines = cv2.HoughLines(new_im, 1, np.pi/180, 2)
     line_detected = False
+
     try:
       original_theta = np.arctan((corner2[1]-corner1[1])/(corner2[0]-corner1[0])) + np.pi/2
     except ZeroDivisionError:
@@ -451,8 +456,11 @@ def detect_bonds(img, template_dict, corner_file, bbox_width=40, angle_tol = 1):
       y0 = bbox[2]
       y1 = bbox[3]
       im[y0:y1, x0:x1] = np.zeros((y1-y0,x1-x0))
-  with open(corner_file, 'rb') as handle:
-    corners = pickle.load(handle)
+  with open('pickles/'+corner_file, 'rb') as handle:
+    u = pickle._Unpickler(handle)
+    u.encoding = 'latin1'
+    corners = u.load()
+    
   display_im = cv2.cvtColor(im, cv2.COLOR_GRAY2RGB)
   checked = set([])
   for corner1 in corners:
@@ -466,7 +474,7 @@ def detect_bonds(img, template_dict, corner_file, bbox_width=40, angle_tol = 1):
       corner2 = corners[idx]
       if corner1 == corner2:
         continue
-      if (corner2,corner1) in checked:
+      if (corner2,corner1) in checked: # maybe switch around
         continue
       else:
         checked.add((corner1,corner2))
@@ -486,7 +494,7 @@ def detect_bonds(img, template_dict, corner_file, bbox_width=40, angle_tol = 1):
         for corner in corners:
           if corner == corner1 or corner == corner2:
             continue
-          if mask[corner[1], corner[0]] != 0:
+          if mask[int(corner[1]), int(corner[0])] != 0:
             flag = 1
       if flag == 1:
         continue
@@ -679,8 +687,6 @@ def classify_bonds(edge_file,img,classifier,label_dict,template_dict_file,rect_w
     u.encoding = 'latin1'
     edges = u.load()
    
-#edges = pickle.load(handle)
-
   with open(template_dict_file, 'rb') as handle:
     template_dict = pickle.load(handle)
   print(edges)
